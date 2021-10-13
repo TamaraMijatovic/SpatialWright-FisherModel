@@ -21,6 +21,11 @@ class Visualization:
         
 
 if __name__=='__main__':
+    connection_mat=[[1,1,1,1],\
+                    [1,1,1,1],\
+                    [1,1,1,1],\
+                    [1,1,1,1]]
+    l = Landscape(connection_mat)
     v = Visualization()
-    v.visualize('a', [2,2])
+    v.visualize(l, [2,2])
     

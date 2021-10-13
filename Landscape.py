@@ -13,7 +13,7 @@ class Landscape:
     def __init__(self, connection_mat):
         self.N = len(connection_mat)
         assert(connection_mat)
-        self.populations = [Population() for n in self.N]
+        self.populations = [Population() for n in self.N] # TODO: add arguments
         self.connections = connection_mat
         
     def get_connections(self):
@@ -42,8 +42,8 @@ class Landscape:
                     
 if __name__=='__main__':
     connection_mat=[[1,1][1,1]]
-    Landscape(connection_mat)
-    Landscape.update()
+    l = Landscape(connection_mat)
+    l.update()
     
                     
         
