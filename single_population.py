@@ -15,7 +15,7 @@ import numpy as np
 
 class Population:
     
-    # Class Variables
+    #%% Initialize
     
     def __init__(self, N_copies, N_alleles=2):
         self.N_copies = N_copies
@@ -24,8 +24,31 @@ class Population:
         self.population[0] = N_copies
         self.update_relative_population()
         self.generational_memory = []
+    
+    
+    #%% getters and setters
+    
+    def get_N_copies(self):
+        return self.N_copies
+    
+    def get_N_alleles(self):
+        return self.N_alleles
+    
+    def get_population(self):
+        return self.population
+    
+    def get_generational_memory(self):
+        return self.generational_memory
+    
+    def set_N_copies(self, N_copies):
+        self.N_copies = N_copies
         
-   
+    def set_N_alleles(self, N_alleles):
+        self.N_alleles = N_alleles
+    
+    
+    #%% a couple of helper methods
+    
     # Calculate the frequency of the alleles in the population.
     # Changes the instance variable rel_pop.
     def calc_relative_population(self, population):
@@ -57,6 +80,8 @@ class Population:
             if random_number < rpc:
                 return i
         
+    
+    #%% Create a new population
     
     # Create a population based on a given relative population.
     # To ensure that we obtain exactly N_copies individuals:
@@ -95,9 +120,8 @@ class Population:
         self.generational_memory = []
         self.generational_memory.append(self.population)
     
-    # Allows for the addition of individuals to the population
-    def add_to_population(self, added_pop):
-        self.population = [self.population[i] + added_pop[i] for i in range(self.N_alleles)]
+    
+    #%% Create the next generation
     
     # Generate the next generation of 
     def generation(self):
@@ -109,8 +133,14 @@ class Population:
             self.population[self.draw_random_individual_from_relative_population_cum(rel_pop_cum)] += 1
         
         self.generational_memory.append(self.population)
-        
-    # spread to neighbors
+    
+    #%% Communication with other populations
+    
+    # Allows for the addition of individuals to the population
+    def add_to_population(self, added_pop):
+        self.population = [self.population[i] + added_pop[i] for i in range(self.N_alleles)]
+    
+    # spread fixed number of offspring to neighbors
     def fetch_offspring(self, N_offspring):
         rel_pop_cum = self.cumsum(self.rel_pop)
         offspring = [0 for i in range(self.N_alleles)]
@@ -126,6 +156,7 @@ class Population:
         
         
     
+#%% Testing
 
 if __name__ == '__main__':
     print("hi!")
