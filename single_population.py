@@ -109,6 +109,22 @@ class Population:
             self.population[self.draw_random_individual_from_relative_population_cum(rel_pop_cum)] += 1
         
         self.generational_memory.append(self.population)
+        
+    # spread to neighbors
+    def fetch_offspring(self, N_offspring):
+        rel_pop_cum = self.cumsum(self.rel_pop)
+        offspring = [0 for i in range(self.N_alleles)]
+        
+        for i in range(N_offspring):
+            offspring[self.draw_random_individual_from_relative_population_cum(rel_pop_cum)] += 1
+        
+        return offspring
+    
+    # spread to neighbors but relative to number of copies
+    def fetch_offspring_relative(self, p_N_copies):
+        return self.fetch_offspring(round(p_N_copies * self.N_copies))
+        
+        
     
 
 if __name__ == '__main__':
