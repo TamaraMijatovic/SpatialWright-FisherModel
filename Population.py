@@ -124,7 +124,7 @@ class Population:
     #%% Create the next generation
     
     # Generate the next generation of 
-    def generation(self):
+    def next_generation(self):
         self.update_relative_population()
         rel_pop_cum = self.cumsum(self.rel_pop)
         
