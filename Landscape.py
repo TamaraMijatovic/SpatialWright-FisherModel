@@ -46,7 +46,7 @@ class Landscape:
             if p != 0:
                 exchanged = [np.sum(np.random.rand(allele)<p) for allele in alleles[i]] # every allele has a probability of being exchanged
                 self.populations[j].add_genes(exchanged) # the number of exchanged alleles is random
-                print(exchanged)
+                #print(exchanged)
                     
     def next_generation(self):
         for n in range(self.N):
