@@ -40,14 +40,14 @@ class Visualization:
         
         for gen in generations:
             self.visualize_generation(gen, grid)
-            cb = plt.colorbar()
+            #cb = plt.colorbar()
             plt.clim(0,1)
             
             fig.canvas.draw()
             fig.canvas.flush_events()
             time.sleep(0.01)
             
-            cb.remove()
+            # cb.remove()
             
         cb = plt.colorbar()
         plt.clim(0,1)
@@ -64,7 +64,7 @@ if __name__=='__main__':
     connection_mat = np.diag(diag1, 1) + np.diag(diag1, -1) + np.diag(diag2, size) + np.diag(diag2, -size)
     
     v = Visualization()
-    l = Landscape(connection_mat, 100, 2)
+    l = Landscape(connection_mat, 10, 2)
     v.visualize_connections(l, [2,2])
     
     #l.set_initial_populations([[1,0], [1,1], [1,1], [0,1]])
