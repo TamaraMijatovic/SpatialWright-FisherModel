@@ -7,7 +7,6 @@ Created on Wed Oct 13 19:31:59 2021
 
 from Landscape import Landscape
 import matplotlib.pyplot as plt
-import matplotlib.animation as anim
 import numpy as np
 import time
 
@@ -21,14 +20,19 @@ class Visualization:
         plt.imshow(connections)
         plt.colorbar()
         
-    def visualize_generation(self, gen, grid):
-        plt.imshow(np.reshape(gen[:,0], grid))
+    def visualize_generation(self, gen, grid, i):
+        if i==0:
+            self.obj = plt.imshow(np.reshape(gen[:,0], grid))
+            plt.colorbar()
+            plt.clim(0,1)
+        else:
+            self.obj.set_data(np.reshape(gen[:,0], grid))
         
     def visualize_current_genePool(self, Landscape, grid, title='Landscape'):
         landscape = np.array(Landscape.get_normalized_genePools()) # get the first allele frequency from the gene pool      
         plt.figure(title)
-        self.visualize_generation(landscape, grid)
-        cb = plt.colorbar()
+        plt.imshow(np.reshape(landscape[:,0], grid))
+        plt.colorbar()
         plt.clim(0,1)
         
     def visualize_genePool_generations(self, Landscape, grid, title='Landscape evolution'):
@@ -38,19 +42,11 @@ class Visualization:
         plt.ion()
         fig = plt.figure(title)
         
-        for gen in generations:
-            self.visualize_generation(gen, grid)
-            #cb = plt.colorbar()
-            plt.clim(0,1)
-            
+        for i,gen in enumerate(generations):
+            self.visualize_generation(gen, grid, i)
             fig.canvas.draw()
             fig.canvas.flush_events()
             time.sleep(0.01)
-            
-            # cb.remove()
-            
-        cb = plt.colorbar()
-        plt.clim(0,1)
         
         # https://www.geeksforgeeks.org/how-to-update-a-plot-on-same-figure-during-the-loop/
 

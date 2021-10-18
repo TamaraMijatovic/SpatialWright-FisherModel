@@ -8,11 +8,12 @@ Created on Wed Oct 13 10:41:46 2021
 from Population import Population
 import numpy as np
 from itertools import product
+from multiprocessing import Pool
 
 class Landscape:
     def __init__(self, connection_mat, N_copies, N_alleles=2, init_pop=None):
         self.N = len(connection_mat)
-        assert(len(connection_mat[0])==self.N) # Make sure the matrix is square.
+        assert(len(connection_mat)==self.N) # Make sure the matrix is square.
         self.populations = [Population(N_copies, N_alleles, init_pop) for n in range(self.N)] # TODO: add arguments
         self.connections = connection_mat
         
@@ -42,13 +43,18 @@ class Landscape:
     def exchange(self):
         alleles = self.get_genePools()
         for i,j in product(range(self.N), range(self.N)):
-            p=self.connections[i][j] # exchange from i to j
+            p=self.connections[i,j] # exchange from i to j
             if p != 0:
                 exchanged = [np.sum(np.random.rand(allele)<p) for allele in alleles[i]] # every allele has a probability of being exchanged
                 self.populations[j].add_genes(exchanged) # the number of exchanged alleles is random
                 #print(exchanged)
                     
+    def next_gen_i(self,i):
+        self.populations[i].next_generation()
+                
     def next_generation(self):
+        # with Pool(5) as p:
+            # p.map(self.next_gen_i, np.arange(self.N))
         for n in range(self.N):
             self.populations[n].next_generation() # calculate the next generation
             
@@ -64,7 +70,9 @@ if __name__=='__main__':
     l = Landscape(connection_mat, 100)
     l.set_initial_populations([[10,1], [3,2]])
     print(l.get_genePools())
-    l.update()
+    for i in range(100):
+        print(i)
+        l.update()
     print(l.get_generational_memory())
     
                     

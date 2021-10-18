@@ -112,13 +112,21 @@ class Population:
     
     # fetch fixed number of offspring
     def fetch_offspring(self, N_offspring, rel_pop):
-        rel_pop_cum = self.cumsum(rel_pop)
+        #rel_pop_cum = self.cumsum(rel_pop)
         
-        offspring = [0 for i in range(self.N_alleles)]
-        for i in range(N_offspring):
-            offspring[self.draw_random_individual_from_relative_population_cum(rel_pop_cum)] += 1
+        #offspring = [0 for i in range(self.N_alleles)]
+        #offspring = np.zeros(self.N_alleles, dtype=int)
+        idxs = np.random.choice(len(rel_pop), size=N_offspring, p=rel_pop)
+        #for idx in idxs:
+        #    offspring[idx] += 1
+        offspring = [int(np.sum(idxs == i)) for i in range(self.N_alleles)]
         
+        #for i in range(N_offspring):
+            #offspring[np.random.choice(len(rel_pop), p=rel_pop)]+=1
+            #offspring[self.draw_random_individual_from_relative_population_cum(rel_pop_cum)] += 1
+
         return offspring
+        #return [int(x) for x in offspring]
     
     # spread to neighbors but relative to number of copies
     def fetch_offspring_relative(self, p_N_copies, rel_pop):
