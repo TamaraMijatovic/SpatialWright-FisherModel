@@ -22,7 +22,7 @@ class Population:
     def __init__(self, init_rel_pop):
         self.rel_pop = init_rel_pop
         self.normalize_rel_pop()
-        print(self.rel_pop)
+        # print(self.rel_pop)
         self.generational_memory = []
         self.generational_memory.append(self.rel_pop)
       
@@ -40,6 +40,7 @@ class Population:
             if random_number < r:
                 self.rel_pop = 0 * self.rel_pop
                 self.rel_pop[i] = 1
+                break
                 
         self.generational_memory.append(self.rel_pop)
     
@@ -60,10 +61,6 @@ class Population:
 def next_generation(size, populations, spread_coeffs):
     offspring = np.array([[populations[i][j].get_offspring(spread_coeffs[i][j]) for j in range(size)] for i in range(size)])
     
-    for p in populations:
-        for pp in p:
-            print(pp.get_generation())
-    
     total_offspring = np.zeros((size, size, 2))
     total_offspring[:, :-1] += offspring[:, 1:]
     total_offspring[:, 1:] += offspring[:, :-1]
@@ -78,10 +75,10 @@ def next_generation(size, populations, spread_coeffs):
     
     
 
-size = 10
+size = 500
 
 pop_coeffs = [[[0.5, 0.5] for j in range(size)] for i in range(size)]
-spread_coeffs = [[[0.1, 0.1] for j in range(size)] for i in range(size)]
+spread_coeffs = [[[0.5, 0.5] for j in range(size)] for i in range(size)]
 
 populations = [[Population(pop_coeffs[i][j]) for j in range(size)] for i in range(size)]
 
@@ -92,11 +89,12 @@ for i, p in enumerate(populations):
 next_generation(size, populations, spread_coeffs)
 
 
-N_steps = 100
+N_steps = 1000
 rel_pop = np.zeros((size, size, 2))
 
 for i in range(N_steps):
-    print('start')
+    print("step", i, "/", N_steps)
     next_generation(size, populations, spread_coeffs)
-    rel_pop = np.array([[populations[i][j].get_generation() for j in range(size)] for i in range(size)])
-    # plt.imshow(rel_pop)
+    rel_pop = np.array([[populations[i][j].get_generation()[0] for j in range(size)] for i in range(size)])
+    plt.imshow(rel_pop)
+    plt.show()
