@@ -69,7 +69,7 @@ if __name__=='__main__':
     print("Initial gene pools:", l.get_genePools())
     v.visualize_current_genePool(l, [size,size])
     for i in range(200):
-        l.update()
+        l.update_biased([1,2])
     v.visualize_genePool_generations(l, [size,size], every=1)
     #v.visualize_current_genePool(l, [size,size], 'Final landscape')
     

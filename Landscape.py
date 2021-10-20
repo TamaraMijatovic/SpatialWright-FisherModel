@@ -42,9 +42,22 @@ class Landscape:
     def exchange(self):
         alleles = self.get_genePools()
         for i,j in product(range(self.N), range(self.N)):
-            p=self.connections[i,j] # exchange from i to j
+            p=self.connections[i][j] # exchange from i to j
             if p != 0:
                 exchanged = [np.sum(np.random.rand(allele)<p) for allele in alleles[i]] # every allele has a probability of being exchanged
+                self.populations[j].add_genes(exchanged) # the number of exchanged alleles is random
+                #print(exchanged)
+                
+    def exchange_biased(self, bias=None):
+        alleles = self.get_genePools()
+        
+        if bias == None:
+            bias = [1 for i in range(len(alleles[0]))]
+        
+        for i,j in product(range(self.N), range(self.N)):
+            p=self.connections[i][j] # exchange from i to j
+            if p != 0:
+                exchanged = [np.sum(np.random.rand(allele)<bias[k]*p) for k,allele in enumerate(alleles[i])] # every allele has a probability of being exchanged
                 self.populations[j].add_genes(exchanged) # the number of exchanged alleles is random
                 #print(exchanged)
                     
@@ -58,6 +71,10 @@ class Landscape:
     def update(self):
         self.exchange()
         self.next_generation()
+        
+    def update_biased(self, bias=None):
+        self.exchange_biased(bias)
+        self.next_generation()
 
 
 #%% Testing
@@ -69,7 +86,8 @@ if __name__=='__main__':
     print(l.get_genePools())
     for i in range(100):
         print(i)
-        l.update()
+        #l.update()
+        l.update_biased()
     print(l.get_generational_memory())
     
                     

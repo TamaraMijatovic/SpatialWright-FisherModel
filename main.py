@@ -19,7 +19,7 @@ def single_run():
     
     v = Visualization()
     l = Landscape(connection_mat, 100, 2)
-    l.set_initial_populations(generate_initial_pop(size))
+    l.set_initial_populations(generate_initial_pop(size, mode=1))
     
     
     #%% Visualize
@@ -28,12 +28,11 @@ def single_run():
     v.visualize_connections(l, [2,2])
     # visualize initial gene pools
     print("Initial gene pools:", l.get_genePools())
-    v.visualize_current_genePool(l, [size,size], every=100)
-    
+    v.visualize_current_genePool(l, [size,size])
     
     tt = time.time()
     for i in range(1000):
-        l.update()
+        l.update_biased([1,2])
     print(time.time()-tt)
     
     # visualize results
@@ -41,14 +40,14 @@ def single_run():
     #v.visualize_current_genePool(l, [size,size], 'Final landscape')
     
 def simulate():
-    database = Database('test.txt')
-    results = MonteCarlo(c_vals=[0.001, 0.0001], size=5, generations=1000, runs=10)
+    database = Database('Dataset1_unbiased.txt')
+    results = MonteCarlo(c_vals=[0.001, 0.0001, 0.0001], size=20, generations=1000, runs=50, bias=None)
     database.store(results)
     
 
 if __name__=='__main__':
-    #single_run()
-    simulate()
+    single_run()
+    #simulate()
     
     
 '''py-spy top -- python '''
