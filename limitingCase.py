@@ -17,6 +17,8 @@ import numpy as np
 import random as rnd
 import matplotlib.pyplot as plt
 
+from measureBlotchiness import BlotchinessMeasurer
+
 class Population:
     
     def __init__(self, init_rel_pop):
@@ -75,10 +77,10 @@ def next_generation(size, populations, spread_coeffs):
     
     
 
-size = 500
+size = 50
 
 pop_coeffs = [[[0.5, 0.5] for j in range(size)] for i in range(size)]
-spread_coeffs = [[[0.5, 0.5] for j in range(size)] for i in range(size)]
+spread_coeffs = [[[0.01, 0.01] for j in range(size)] for i in range(size)]
 
 populations = [[Population(pop_coeffs[i][j]) for j in range(size)] for i in range(size)]
 
@@ -88,13 +90,24 @@ for i, p in enumerate(populations):
 
 next_generation(size, populations, spread_coeffs)
 
-
-N_steps = 1000
+N_steps = 10000
 rel_pop = np.zeros((size, size, 2))
+
+BM = BlotchinessMeasurer()
+
+
+blotchiness = []
 
 for i in range(N_steps):
     print("step", i, "/", N_steps)
     next_generation(size, populations, spread_coeffs)
-    rel_pop = np.array([[populations[i][j].get_generation()[0] for j in range(size)] for i in range(size)])
-    plt.imshow(rel_pop)
-    plt.show()
+    rel_pop = np.array([[populations[i][j].get_generation() for j in range(size)] for i in range(size)])
+    
+    blotchiness.append(BM.measure(rel_pop))
+    
+    if(i%100 == 0):
+        plt.imshow(rel_pop[:,:,0])
+        plt.show()
+        
+        
+        
