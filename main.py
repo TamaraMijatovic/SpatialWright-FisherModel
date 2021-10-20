@@ -2,19 +2,11 @@
 
 from Landscape import Landscape
 from Visualization import Visualization
-#import MonteCarlo
-import numpy as np
+from MonteCarlo import MonteCarlo, generate_connection_mat, generate_initial_pop
+from Database import Database
 import time
 
-def generate_connection_mat(c, size):
-    diag1 = np.array([[c for i in range(size-1)]+[0] for j in range(size)]).flatten()[:-1]
-    diag2 = [c for i in range((size-1)*size)]
-    connection_mat = np.diag(diag1, 1) + np.diag(diag1, -1) + np.diag(diag2, size) + np.diag(diag2, -size)
-    
-    #print(connection_mat)
-    return connection_mat
-
-if __name__=='__main__':
+def single_run():
     #%% Create connection matrix
     
     # Matrix that connects 
@@ -27,22 +19,36 @@ if __name__=='__main__':
     
     v = Visualization()
     l = Landscape(connection_mat, 100, 2)
-    #l.set_initial_populations([[1,0], [1,1], [1,1], [0,1]])
-    l.set_initial_populations([[1,0]]+[[1,1] for i in range(size**2-2) ]+[[0,1]])
+    l.set_initial_populations(generate_initial_pop(size))
     
     
     #%% Visualize
     
+    # visualize connection matrix
     v.visualize_connections(l, [2,2])
+    # visualize initial gene pools
     print("Initial gene pools:", l.get_genePools())
-    v.visualize_current_genePool(l, [size,size])
+    v.visualize_current_genePool(l, [size,size], every=100)
+    
+    
     tt = time.time()
     for i in range(1000):
         l.update()
     print(time.time()-tt)
     
-    #v.visualize_genePool_generations(l, [size,size])
+    # visualize results
+    v.visualize_genePool_generations(l, [size,size], every=10)
     #v.visualize_current_genePool(l, [size,size], 'Final landscape')
+    
+def simulate():
+    database = Database('test.txt')
+    results = MonteCarlo(c_vals=[0.001, 0.0001], size=5, generations=1000, runs=10)
+    database.store(results)
+    
+
+if __name__=='__main__':
+    #single_run()
+    simulate()
     
     
 '''py-spy top -- python '''

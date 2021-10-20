@@ -35,14 +35,14 @@ class Visualization:
         plt.colorbar()
         plt.clim(0,1)
         
-    def visualize_genePool_generations(self, Landscape, grid, title='Landscape evolution'):
+    def visualize_genePool_generations(self, Landscape, grid, every=1, title='Landscape evolution'):
         generations = np.transpose(np.array(Landscape.get_generational_memory()), [1,0,2])
         # transpose to make the 0th axis correspond to the generations rather than the populations.
         
         plt.ion()
         fig = plt.figure(title)
         
-        for i,gen in enumerate(generations):
+        for i,gen in enumerate(generations[np.arange(0,len(generations),every)]):
             self.visualize_generation(gen, grid, i)
             fig.canvas.draw()
             fig.canvas.flush_events()
@@ -53,7 +53,7 @@ class Visualization:
 if __name__=='__main__':
     
     c = 0.05
-    size = 5
+    size = 10
     a = np.zeros((size**2, size**2)) # Create matrix with only 0
     diag1 = np.array([[c for i in range(size-1)]+[0] for j in range(size)]).flatten()[:-1]
     diag2 = [c for i in range((size-1)*size)]
@@ -68,8 +68,8 @@ if __name__=='__main__':
     
     print("Initial gene pools:", l.get_genePools())
     v.visualize_current_genePool(l, [size,size])
-    for i in range(100):
+    for i in range(200):
         l.update()
-    v.visualize_genePool_generations(l, [size,size])
+    v.visualize_genePool_generations(l, [size,size], every=1)
     #v.visualize_current_genePool(l, [size,size], 'Final landscape')
     
