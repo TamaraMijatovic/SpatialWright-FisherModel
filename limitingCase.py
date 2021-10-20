@@ -80,7 +80,7 @@ def next_generation(size, populations, spread_coeffs):
 size = 50
 
 pop_coeffs = [[[0.5, 0.5] for j in range(size)] for i in range(size)]
-spread_coeffs = [[[0.01, 0.01] for j in range(size)] for i in range(size)]
+spread_coeffs = [[[0.01, 0.0] for j in range(size)] for i in range(size)]
 
 populations = [[Population(pop_coeffs[i][j]) for j in range(size)] for i in range(size)]
 
@@ -90,7 +90,7 @@ for i, p in enumerate(populations):
 
 next_generation(size, populations, spread_coeffs)
 
-N_steps = 10000
+N_steps = 1000
 rel_pop = np.zeros((size, size, 2))
 
 BM = BlotchinessMeasurer()

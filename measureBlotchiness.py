@@ -30,7 +30,7 @@ class BlotchinessMeasurer:
                 mean_lattice[i] = 1
             
         
-        return mean_out_lattice / mean_lattice
+        return mean_out_lattice / mean_lattice / 4
     
     
     
@@ -43,4 +43,4 @@ if __name__ == '__main__':
     # A = np.array([[( 1,  0) for j in range(100)] for i in range(100)])
     
     BM = BlotchinessMeasurer()
-    blotch = BM.blotchiness(A)
+    blotch = BM.measure(A)
