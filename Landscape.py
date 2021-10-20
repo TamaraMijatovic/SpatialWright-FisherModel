@@ -8,7 +8,6 @@ Created on Wed Oct 13 10:41:46 2021
 from Population import Population
 import numpy as np
 from itertools import product
-from multiprocessing import Pool
 
 class Landscape:
     def __init__(self, connection_mat, N_copies, N_alleles=2, init_pop=None):
@@ -53,8 +52,6 @@ class Landscape:
         self.populations[i].next_generation()
                 
     def next_generation(self):
-        # with Pool(5) as p:
-            # p.map(self.next_gen_i, np.arange(self.N))
         for n in range(self.N):
             self.populations[n].next_generation() # calculate the next generation
             
