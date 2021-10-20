@@ -42,7 +42,7 @@ def MonteCarloRun(args):
 def MonteCarlo(c_vals, size, individuals=100, alleles=2, generations=1000, runs=100):
     args = [[c, size, individuals, alleles, generations, runs] for c in c_vals]
     
-    with Pool(5) as p:
+    with Pool(2) as p:
         results = p.map(MonteCarloRun, args)
         
     results_dict = {}
@@ -53,8 +53,9 @@ def MonteCarlo(c_vals, size, individuals=100, alleles=2, generations=1000, runs=
  
     
 if __name__=='__main__':
-        
-    results = MonteCarlo(c_vals=[0.001, 0.0001], size=2, generations=10, runs=2)
-    print(results)
+    tt = time.time()
+    results = MonteCarlo(c_vals=[0.001, 0.0001], size=5, generations=1000, runs=10)
+    print('Execution time:', time.time()-tt)
+    #print(results)
     time.sleep(60)
     
