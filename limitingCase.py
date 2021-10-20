@@ -80,7 +80,7 @@ def next_generation(size, populations, spread_coeffs):
 size = 50
 
 pop_coeffs = [[[0.5, 0.5] for j in range(size)] for i in range(size)]
-spread_coeffs = [[[0.01, 0.0] for j in range(size)] for i in range(size)]
+spread_coeffs = [[[0.01, 0.01] for j in range(size)] for i in range(size)]
 
 populations = [[Population(pop_coeffs[i][j]) for j in range(size)] for i in range(size)]
 
@@ -97,6 +97,7 @@ BM = BlotchinessMeasurer()
 
 
 blotchiness = []
+mean = []
 
 for i in range(N_steps):
     print("step", i, "/", N_steps)
@@ -104,6 +105,7 @@ for i in range(N_steps):
     rel_pop = np.array([[populations[i][j].get_generation() for j in range(size)] for i in range(size)])
     
     blotchiness.append(BM.measure(rel_pop))
+    mean.append(BM.measurePop(rel_pop))
     
     if(i%100 == 0):
         plt.imshow(rel_pop[:,:,0])

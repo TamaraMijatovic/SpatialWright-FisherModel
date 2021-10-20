@@ -33,6 +33,14 @@ class BlotchinessMeasurer:
         return mean_out_lattice / mean_lattice / 4
     
     
+    def measurePop(self, lattice):
+
+        mean_lattice = np.mean(lattice[1:-1, 1:-1], (0, 1))
+
+        
+        return mean_lattice
+    
+    
     
     
 if __name__ == '__main__':
