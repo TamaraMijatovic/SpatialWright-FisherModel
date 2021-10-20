@@ -35,10 +35,11 @@ def MonteCarloRun(args):
     connection_mat = generate_connection_mat(c, size)
     
     results = []
-    for run in range(runs):      
+    for run in range(runs):
+        print(f'c: {c}, run: {run}')
         # Generate Landscape
         l = Landscape(connection_mat, individuals, alleles)
-        l.set_initial_populations(generate_initial_pop(size))
+        l.set_initial_populations(generate_initial_pop(size, mode=1))
         for i in range(generations):
             l.update_biased(bias)
         # Store data
@@ -50,7 +51,7 @@ def MonteCarloRun(args):
 def MonteCarlo(c_vals, size, individuals=100, alleles=2, generations=1000, runs=100, bias=None):
     args = [[c, size, individuals, alleles, generations, runs, bias] for c in c_vals]
     
-    with Pool(2) as p:
+    with Pool(3) as p:
         results = p.map(MonteCarloRun, args)
         
     results_dict = {}
@@ -62,7 +63,7 @@ def MonteCarlo(c_vals, size, individuals=100, alleles=2, generations=1000, runs=
     
 if __name__=='__main__':
     tt = time.time()
-    results = MonteCarlo(c_vals=[0.001, 0.0001], size=5, generations=1000, runs=1, bias=[1,2])
+    results = MonteCarlo(c_vals=[0.001, 0.0001], size=5, generations=10, runs=1, bias=[1,2])
     print('Execution time:', time.time()-tt)
     print(results)
     time.sleep(60)

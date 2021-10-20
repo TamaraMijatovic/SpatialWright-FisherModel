@@ -31,23 +31,23 @@ def single_run():
     v.visualize_current_genePool(l, [size,size])
     
     tt = time.time()
-    for i in range(1000):
-        l.update_biased([1,2])
+    for i in range(100):
+        l.update_biased([1,1])
     print(time.time()-tt)
     
     # visualize results
-    v.visualize_genePool_generations(l, [size,size], every=10)
+    v.visualize_genePool_generations(l, [size,size], every=1)
     #v.visualize_current_genePool(l, [size,size], 'Final landscape')
     
 def simulate():
-    database = Database('Dataset1_unbiased.txt')
-    results = MonteCarlo(c_vals=[0.001, 0.0001, 0.0001], size=20, generations=1000, runs=50, bias=None)
+    database = Database('Dataset2_biased.txt')
+    results = MonteCarlo(c_vals=[0.001, 0.0001, 0.00001], size=20, generations=1000, runs=50, bias=None)
     database.store(results)
     
 
 if __name__=='__main__':
-    single_run()
-    #simulate()
+    #single_run()
+    simulate()
     
     
 '''py-spy top -- python '''
