@@ -30,40 +30,37 @@ def generate_initial_pop(size, mode=1):
     return init_pop
 
 def MonteCarloRun(args):
-    c, size, individuals, alleles, generations, runs, bias = args
-    # Generate connection matrix
-    connection_mat = generate_connection_mat(c, size)
+    c, size, connection_mat, individuals, alleles, generations, bias, run = args
     
-    results = []
-    for run in range(runs):
-        print(f'c: {c}, run: {run}')
-        # Generate Landscape
-        l = Landscape(connection_mat, individuals, alleles)
-        l.set_initial_populations(generate_initial_pop(size, mode=1))
-        for i in range(generations):
-            l.update_biased(bias)
-        # Store data
-        results.append(l.get_generational_memory())
-        #print(c, l.get_generational_memory())
-        
-    return results
+    print(f'c: {c}, run: {run}')
+    # Generate Landscape
+    l = Landscape(connection_mat, individuals, alleles)
+    l.set_initial_populations(generate_initial_pop(size, mode=1))
+    for i in range(generations):
+        l.update_biased(bias)
+
+    #print(c, l.get_generational_memory())
+    return l.get_generational_memory()
 
 def MonteCarlo(c_vals, size, individuals=100, alleles=2, generations=1000, runs=100, bias=None):
-    args = [[c, size, individuals, alleles, generations, runs, bias] for c in c_vals]
     
-    with Pool(3) as p:
-        results = p.map(MonteCarloRun, args)
-        
     results_dict = {}
-    for i,result in enumerate(results):
-        results_dict[c_vals[i]] = result
+    for c in c_vals:
+        # Generate connection matrix
+        connection_mat = generate_connection_mat(c, size)
+        
+        args = [[c, size, connection_mat, individuals, alleles, generations, bias, run] for run in range(runs)]
+        with Pool(12) as p:
+            results = p.map(MonteCarloRun, args)
+    
+        results_dict[c] = results
         
     return results_dict
  
     
 if __name__=='__main__':
     tt = time.time()
-    results = MonteCarlo(c_vals=[0.001, 0.0001], size=5, generations=10, runs=1, bias=[1,2])
+    results = MonteCarlo(c_vals=[0.001, 0.0001], size=5, generations=100, runs=20, bias=[1,2])
     print('Execution time:', time.time()-tt)
     print(results)
     time.sleep(60)
