@@ -72,8 +72,8 @@ class Database:
     
     
 if __name__=='__main__':
-    database = Database('test.txt')
-    results = MonteCarlo(c_vals=[0.001, 0.0001], size=2, generations=10, runs=2)
+    database = Database('Data/test.txt')
+    results = MonteCarlo(c_vals=[0.01, 0.0001], size=2, generations=10, runs=2)
     print("Before:", results)
     database.store(results)
     read_results = database.load()

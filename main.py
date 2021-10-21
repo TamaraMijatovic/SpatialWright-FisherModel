@@ -31,8 +31,8 @@ def single_run():
     v.visualize_current_genePool(l, [size,size])
     
     tt = time.time()
-    for i in range(100):
-        l.update_biased([1,1])
+    for i in range(1000):
+        l.update_biased([1,2])
     print(time.time()-tt)
     
     # visualize results
@@ -40,8 +40,8 @@ def single_run():
     #v.visualize_current_genePool(l, [size,size], 'Final landscape')
     
 def simulate():
-    database = Database('Dataset2_biased.txt')
-    results = MonteCarlo(c_vals=[0.001, 0.0001, 0.00001], size=20, generations=1000, runs=50, bias=None)
+    database = Database('Data/Dataset5_biased_1_1.5.txt')
+    results = MonteCarlo(c_vals=[0.001, 0.0001, 0.00001], size=20, generations=1000, runs=50, bias=[1,1.5])
     database.store(results)
     
 
