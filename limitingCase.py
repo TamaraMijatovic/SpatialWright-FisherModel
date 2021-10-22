@@ -80,7 +80,7 @@ def next_generation(size, populations, spread_coeffs):
 size = 100
 
 pop_coeffs = [[[0.5, 0.5] for j in range(size)] for i in range(size)]
-spread_coeffs = [[[0.001, 0.0011] for j in range(size)] for i in range(size)]
+spread_coeffs = [[[0.001, 0.001] for j in range(size)] for i in range(size)]
 
 populations = [[Population(pop_coeffs[i][j]) for j in range(size)] for i in range(size)]
 
