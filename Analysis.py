@@ -18,27 +18,11 @@ class Analysis:
         self.BM = BlotchinessMeasurer()
         self.blotchiness = []
         
-    def analyze(self):
+    def analyze(self, mode):
+        self.blotchiness = []
         for c in self.results:
-            self.blotchiness.append(self.BM.measure_generations(self.results[c]))
-        
-    def visualize_blotchiness(self, title = "Blotchiness_over_generations"):
-        plt.figure(title)
-        linestyles = ['-', ':', '--', '-.']
-        plt.grid()
-        #print(self.blotchiness)
-        for i,c in enumerate(self.results):
-            for j,allele in enumerate(self.blotchiness[i].T):
-                plt.plot(allele, c=f'C{i}', linestyle=linestyles[j%len(linestyles)], Label=f'c={c}, allele {j}')
-        plt.xlabel('generation')
-        plt.ylabel('blotchiness')
-        plt.legend()
-        plt.xlim([0,len(self.blotchiness[i])-1])
-        plt.ylim([0,1])
-        
-        plt.savefig(f'Plots/{title}.png')
-        plt.close()
-        
+            self.blotchiness.append(self.BM.measure_generations(self.results[c], measure=mode))
+            
     def store_blotchiness(self, file='Blotchiness_results.txt', clear=False):
         if clear:
             f = open(f"Data\{file}", "w")
@@ -47,13 +31,44 @@ class Analysis:
         
         for i,c in enumerate(self.results):
             f.write(f'{self.dataset_name} {c} ')
-            for allele in self.blotchiness[i].T:
-                for generation in allele:
+            
+            if len(self.blotchiness[i].shape)==1:
+                # one measure for all alleles
+                for generation in self.blotchiness[i].T:
                     f.write(f'{generation},')
                 f.write(' ')
+                
+            else:
+                # different measures for the different alleles
+                for allele in self.blotchiness[i].T:
+                    for generation in allele:
+                        f.write(f'{generation},')
+                    f.write(' ')
+                    
             f.write('\n')
             
         f.close()
+        
+    def visualize_blotchiness(self, title = "Blotchiness_over_generations"):
+        linestyles = ['-', ':', '--', '-.']
+        plt.figure(title)
+        plt.grid()
+
+        for i,c in enumerate(self.results):
+            if len(self.blotchiness[i].shape)==1:
+                plt.plot(self.blotchiness[i], c=f'C{i}', Label=f'c={c}')
+            else:
+                for j,allele in enumerate(self.blotchiness[i].T):
+                    plt.plot(allele, c=f'C{i}', linestyle=linestyles[j%len(linestyles)], Label=f'c={c}, allele {j}')
+       
+        plt.xlabel('generation')
+        plt.ylabel('blotchiness')
+        plt.legend()
+        plt.xlim([0,len(self.blotchiness[i])-1])
+        plt.ylim([0,1])
+        
+        plt.savefig(f'Plots/{title}.png')
+        plt.close()
         
     def visualize_last_genePool(self, grid, title='Final_landscape'):
         for i,c in enumerate(self.results):
@@ -77,11 +92,6 @@ class Analysis:
 
 
 if __name__=='__main__':
-    # data_test = Analysis('Data/test.txt')
-    # data_test.analyze()
-    # data_test.store_blotchiness()
-    # data_test.visualize_blotchiness("test")
-    # data_test.visualize_last_genePool([5,5], "test_final")
     
     datasets = ['Data/Dataset1_unbiased.txt', \
                 'Data/Dataset2_biased_1_1.25.txt', \
@@ -89,15 +99,19 @@ if __name__=='__main__':
                 'Data/Dataset4_unbiased.txt', \
                 'Data/Dataset5_biased_1_1.25.txt', \
                 'Data/Dataset6_biased_1_1.5.txt']
+    #datasets = ['Data/test.txt']
         
     for i, dataset in enumerate(datasets):
+        #i='_test'
         data = Analysis(dataset)
-        print("Data loaded!")
+        print(f"Data loaded! {i+1}")
         
-        data.analyze()
-        data.store_blotchiness()
-        print("Data analyzed!")
-        
-        data.visualize_blotchiness(f"Dataset{i}_analysis")
-        data.visualize_last_genePool([20,20], f"Dataset{i}_final")
+        for measure in range(1,5):
+            data.analyze(measure)
+            data.store_blotchiness(f'Blotchiness_results_measure{measure}.txt')
+            data.visualize_blotchiness(f"Dataset{i+1}_blotchiness_{measure}")
+        print(f"Data analyzed! {i+1}")
+
+        # data_test.visualize_last_genePool([5,5], "test_final")
+        data.visualize_last_genePool([20,20], f"Dataset{i+1}_final")
     
