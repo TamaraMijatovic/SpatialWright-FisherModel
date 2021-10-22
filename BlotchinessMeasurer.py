@@ -28,6 +28,7 @@ class BlotchinessMeasurer:
             
         return mean_out_lattice
     
+    
     def measure_divided_by_mean(self, lattice):
         
         mean_out_lattice = self.measure(lattice)
@@ -37,22 +38,62 @@ class BlotchinessMeasurer:
         return mean_out_lattice / mean_lattice
     
     
-    def measure_generations(self, data, every=1):
+    def measure_distance_neighbors(self, lattice):
+        out_lattice = np.zeros(lattice.shape[:2])
+        
+        out_lattice[1:, :]  += np.sqrt(np.sum((lattice[1:, :, :] - lattice[:-1, :, :])**2, (2)))
+        out_lattice[:-1, :] += np.sqrt(np.sum((lattice[:-1, :, :] - lattice[1:, :, :])**2, (2)))
+        out_lattice[:, 1:]  += np.sqrt(np.sum((lattice[:, 1:, :] - lattice[:, :-1, :])**2, (2)))
+        out_lattice[:, :-1] += np.sqrt(np.sum((lattice[:, :-1, :] - lattice[:, 1:, :])**2, (2)))
+        
+        out_lattice = out_lattice / (4*np.sqrt(len(lattice[0][0]))) # normalize
+        mean_out_lattice = np.mean(out_lattice[1:-1, 1:-1], (0, 1))
+
+        return mean_out_lattice
+
+
+    def measure_squared_distance_neighbors(self, lattice):
+        out_lattice = np.zeros(lattice.shape[:2])
+        
+        out_lattice[1:, :]  += (np.sum((lattice[1:, :, :] - lattice[:-1, :, :])**2, (2)))
+        out_lattice[:-1, :] += (np.sum((lattice[:-1, :, :] - lattice[1:, :, :])**2, (2)))
+        out_lattice[:, 1:]  += (np.sum((lattice[:, 1:, :] - lattice[:, :-1, :])**2, (2)))
+        out_lattice[:, :-1] += (np.sum((lattice[:, :-1, :] - lattice[:, 1:, :])**2, (2)))
+        
+        out_lattice = out_lattice / (4*len(lattice[0][0])) # normalize  
+        mean_out_lattice = np.mean(out_lattice[1:-1, 1:-1], (0, 1))
+        
+        return mean_out_lattice
+
+    
+    def measurePop(self, lattice):
+        mean_lattice = np.mean(lattice[1:-1, 1:-1], (0, 1))        
+        return mean_lattice
+    
+    
+    def measure_generations(self, data, measure=1, every=1):
         blotchiness = [[] for run in range(len(data))]
         
         for run, generational_memory in enumerate(data):
             # Change order of axes to have first axes denote the generations
             generations = np.transpose(np.array(generational_memory), [1,0,2])
             
-            for i,gen in enumerate(generations[np.arange(0,len(generations),every)]):
+            for i, gen in enumerate(generations[np.arange(0,len(generations),every)]):
                 gen_lattice = np.reshape(gen, (int(round(np.sqrt(len(gen)))), int(round(np.sqrt(len(gen)))), 2))
-                blotchiness[run].append(self.measure(gen_lattice))
+                
+                if measure==1:
+                    blotchiness[run].append(self.measure(gen_lattice))
+                elif measure==2:
+                    blotchiness[run].append(self.measure_divided_by_mean(gen_lattice))
+                elif measure==3:
+                    blotchiness[run].append(self.measure_distance_neighbors(gen_lattice))
+                elif measure==4:
+                    blotchiness[run].append(self.measure_squared_distance_neighbors(gen_lattice))
         
         blotchiness = np.array(blotchiness)
         mean_blotchiness = np.mean(blotchiness, 0)
         
         return mean_blotchiness#, mean_blotchiness-np.min(blotchiness,0), np.max(blotchiness,0)-mean_blotchiness
-    
     
 if __name__ == '__main__':
     
@@ -70,4 +111,6 @@ if __name__ == '__main__':
     for i in [A,B,C,D,E]:
         blotch1 = BM.measure(i)
         blotch2 = BM.measure_divided_by_mean(i)
-        print(blotch1, blotch2)
+        blotch3 = BM.measure_distance_neighbors(i)
+        blotch4 = BM.measure_squared_distance_neighbors(i)
+        print(f'{blotch1}\t\t{blotch2}\t\t{blotch3}\t\t{blotch4}')
