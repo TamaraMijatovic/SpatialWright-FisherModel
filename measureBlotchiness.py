@@ -49,10 +49,10 @@ class BlotchinessMeasurer:
         # neighbor_d = (lattice[:, :-1, :] - lattice[:, 1:, :])**2
         # neighbor_d = np.sqrt(np.sum(neighbor_d), (2))
         
-        out_lattice[1:, :] += np.sqrt(np.sum((lattice[1:, :, :] - lattice[:-1, :, :])**2, (2)))
-        out_lattice[:-1, :] += np.sqrt(np.sum((lattice[:-1, :, :] - lattice[1:, :, :])**2, (2)))
-        out_lattice[:, 1:] += np.sqrt(np.sum((lattice[:, 1:, :] - lattice[:, :-1, :])**2, (2)))
-        out_lattice[:, :-1] += np.sqrt(np.sum((lattice[:, :-1, :] - lattice[:, 1:, :])**2, (2)))
+        out_lattice[1:, :] += np.sqrt(np.mean((lattice[1:, :, :] - lattice[:-1, :, :])**2, (2)))
+        out_lattice[:-1, :] += np.sqrt(np.mean((lattice[:-1, :, :] - lattice[1:, :, :])**2, (2)))
+        out_lattice[:, 1:] += np.sqrt(np.mean((lattice[:, 1:, :] - lattice[:, :-1, :])**2, (2)))
+        out_lattice[:, :-1] += np.sqrt(np.mean((lattice[:, :-1, :] - lattice[:, 1:, :])**2, (2)))
         
         out_lattice = out_lattice / 4
         
@@ -79,10 +79,10 @@ class BlotchinessMeasurer:
         # neighbor_d = (lattice[:, :-1, :] - lattice[:, 1:, :])**2
         # neighbor_d = np.sqrt(np.sum(neighbor_d), (2))
         
-        out_lattice[1:, :] += (np.sum((lattice[1:, :, :] - lattice[:-1, :, :])**2, (2)))
-        out_lattice[:-1, :] += (np.sum((lattice[:-1, :, :] - lattice[1:, :, :])**2, (2)))
-        out_lattice[:, 1:] += (np.sum((lattice[:, 1:, :] - lattice[:, :-1, :])**2, (2)))
-        out_lattice[:, :-1] += (np.sum((lattice[:, :-1, :] - lattice[:, 1:, :])**2, (2)))
+        out_lattice[1:, :] += (np.mean((lattice[1:, :, :] - lattice[:-1, :, :])**2, (2)))
+        out_lattice[:-1, :] += (np.mean((lattice[:-1, :, :] - lattice[1:, :, :])**2, (2)))
+        out_lattice[:, 1:] += (np.mean((lattice[:, 1:, :] - lattice[:, :-1, :])**2, (2)))
+        out_lattice[:, :-1] += (np.mean((lattice[:, :-1, :] - lattice[:, 1:, :])**2, (2)))
         
         out_lattice = out_lattice / 4
         

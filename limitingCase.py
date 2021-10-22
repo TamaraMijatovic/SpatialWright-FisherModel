@@ -26,7 +26,7 @@ class Population:
         self.normalize_rel_pop()
         # print(self.rel_pop)
         self.generational_memory = []
-        self.generational_memory.append(self.rel_pop)
+        # self.generational_memory.append(self.rel_pop)
       
     def normalize_rel_pop(self):
         self.rel_pop = np.array([r/sum(self.rel_pop) for r in self.rel_pop])
@@ -58,12 +58,11 @@ class Population:
     def get_generation(self):
         return self.rel_pop
     
-    
 
 def next_generation(size, populations, spread_coeffs):
     offspring = np.array([[populations[i][j].get_offspring(spread_coeffs[i][j]) for j in range(size)] for i in range(size)])
     
-    total_offspring = np.zeros((size, size, 2))
+    total_offspring = np.zeros((size, size, offspring.shape[-1]))
     total_offspring[:, :-1] += offspring[:, 1:]
     total_offspring[:, 1:] += offspring[:, :-1]
     total_offspring[:-1, :] += offspring[1:, :]
@@ -76,40 +75,75 @@ def next_generation(size, populations, spread_coeffs):
             pp.gen_until_only_one_remains()
     
     
+class Simulator:
+    
+    def __init__(self, size, N_steps, pop_coeffs, spread_coeffs):
+        
+        self.size = size
+        self.N_steps = N_steps
+        
+        self.pop_coeffs = pop_coeffs
+        self.spread_coeffs = spread_coeffs
+        
+    
+    def simulate(self):
+        populations = [[Population(self.pop_coeffs[i][j]) for j in range(self.size)] for i in range(self.size)]
+        
+        for i, p in enumerate(populations):
+            for j, pp in enumerate(p):
+                pp.gen_until_only_one_remains()
+                
+        for i in range(self.N_steps):
+            next_generation(self.size, populations, self.spread_coeffs)
+            
+            
+        gen_memory = np.array([[pp.get_generational_memory() for pp in p] for p in populations])
+        gen_memory = gen_memory.transpose((2, 0, 1, 3))
+        return gen_memory
+        
+        
+    
 
-size = 100
-
-pop_coeffs = [[[0.5, 0.5] for j in range(size)] for i in range(size)]
-spread_coeffs = [[[0.001, 0.001] for j in range(size)] for i in range(size)]
-
-populations = [[Population(pop_coeffs[i][j]) for j in range(size)] for i in range(size)]
-
-for i, p in enumerate(populations):
-        for j, pp in enumerate(p):
-            pp.gen_until_only_one_remains()
-
-next_generation(size, populations, spread_coeffs)
-
-N_steps = 1000
-rel_pop = np.zeros((size, size, 2))
-
-BM = BlotchinessMeasurer()
-
-
-blotchiness = []
-mean = []
-
-for i in range(N_steps):
-    print("step", i, "/", N_steps)
+    
+if __name__ == '__main__':
+    
+    
+    size = 50
+    
+    pop_coeffs = [[[0.5, 0.5] for j in range(size)] for i in range(size)]
+    spread_coeffs = [[[0.001, 0.001] for j in range(size)] for i in range(size)]
+    
+    # pop_coeffs = [[[0.5, 0.5, 0.5] for j in range(size)] for i in range(size)]
+    # spread_coeffs = [[[0.001, 0.001, 0.001] for j in range(size)] for i in range(size)]
+    
+    populations = [[Population(pop_coeffs[i][j]) for j in range(size)] for i in range(size)]
+    
+    for i, p in enumerate(populations):
+            for j, pp in enumerate(p):
+                pp.gen_until_only_one_remains()
+    
     next_generation(size, populations, spread_coeffs)
-    rel_pop = np.array([[populations[i][j].get_generation() for j in range(size)] for i in range(size)])
     
-    blotchiness.append(BM.measure_squared_distance_neighbors(rel_pop))
-    mean.append(BM.measurePop(rel_pop))
+    N_steps = 1000
+    rel_pop = np.zeros((size, size, 2))
     
-    if(i%100 == 0):
-        plt.imshow(rel_pop[:,:,0])
-        plt.show()
+    BM = BlotchinessMeasurer()
+    
+    
+    blotchiness = []
+    mean = []
+    
+    for i in range(N_steps):
+        print("step", i, "/", N_steps)
+        next_generation(size, populations, spread_coeffs)
+        rel_pop = np.array([[populations[i][j].get_generation() for j in range(size)] for i in range(size)])
         
+        blotchiness.append(BM.measure_squared_distance_neighbors(rel_pop))
+        mean.append(BM.measurePop(rel_pop))
         
-        
+        if(i%100 == 0):
+            plt.imshow(rel_pop[:,:,0])
+            plt.show()
+            
+            
+            
