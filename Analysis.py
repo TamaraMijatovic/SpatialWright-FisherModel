@@ -98,20 +98,24 @@ if __name__=='__main__':
                 'Data/Dataset3_biased_1_1.5.txt', \
                 'Data/Dataset4_unbiased.txt', \
                 'Data/Dataset5_biased_1_1.25.txt', \
-                'Data/Dataset6_biased_1_1.5.txt']
+                'Data/Dataset6_biased_1_1.5.txt', \
+                'Data/Dataset7_unbiased.txt', \
+                'Data/Dataset8_biased_1_1.25.txt', \
+                'Data/Dataset9_biased_1_1.5.txt']
     #datasets = ['Data/test.txt']
         
-    for i, dataset in enumerate(datasets):
+    for i, dataset in enumerate(datasets[6:]):
+        i+=7
         #i='_test'
         data = Analysis(dataset)
-        print(f"Data loaded! {i+1}")
+        print(f"Data loaded! {i}")
         
         for measure in range(1,5):
             data.analyze(measure)
             data.store_blotchiness(f'Blotchiness_results_measure{measure}.txt')
-            data.visualize_blotchiness(f"Dataset{i+1}_blotchiness_{measure}")
-        print(f"Data analyzed! {i+1}")
+            data.visualize_blotchiness(f"Dataset{i}_blotchiness_{measure}")
+        print(f"Data analyzed! {i}")
 
         # data_test.visualize_last_genePool([5,5], "test_final")
-        data.visualize_last_genePool([20,20], f"Dataset{i+1}_final")
+        data.visualize_last_genePool([20,20], f"Dataset{i}_final")
     

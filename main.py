@@ -40,8 +40,8 @@ def single_run():
     #v.visualize_current_genePool('Final landscape')
     
 def simulate():
-    database = Database('Data/Dataset7_unbiased.txt')
-    results = MonteCarlo(c_vals=[0.001, 0.0001, 0.00001], size=20, generations=1000, runs=50, bias=None)
+    database = Database('Data/Dataset9_biased_1_1.5.txt')
+    results = MonteCarlo(c_vals=[0.001, 0.0001, 0.00001], size=20, generations=1000, runs=50, bias=[1,1.5])
     database.store(results)
     
 

@@ -80,7 +80,10 @@ if __name__=='__main__':
             'Data/Dataset3_biased_1_1.5.txt': (1,1.5), \
             'Data/Dataset4_unbiased.txt': (1,1), \
             'Data/Dataset5_biased_1_1.25.txt': (1,1.25), \
-            'Data/Dataset6_biased_1_1.5.txt': (1,1.5)}
+            'Data/Dataset6_biased_1_1.5.txt': (1,1.5), \
+            'Data/Dataset7_unbiased.txt': (1,1), \
+            'Data/Dataset8_biased_1_1.25.txt': (1,1.25), \
+            'Data/Dataset9_biased_1_1.5.txt': (1,1.5)}
         
     compare = BlotchinessComparison(bias, 'Blotchiness_results_measure4.txt')
     compare.compare_connection()
