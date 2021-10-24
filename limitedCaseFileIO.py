@@ -41,7 +41,12 @@ class FileIO:
             f.write(' '.join(array_flattened_stringed)+ '\n')
 
         
-    def read_all(self):
+
+
+
+    def read_all_and_remember_in_brain(self):
+        
+        print("reading...")
         
         container = [[]]
         
@@ -56,10 +61,18 @@ class FileIO:
                     
             del(container[-1])
         
+        
+        print("done")
+        
         output = []
         
+        sh = len(container)
         
-        for c  in container:
+        print("unpacking container...")
+        for i, c  in enumerate(container):
+            
+            print("reading set", i, '/', sh)
+            
             shape_and_params = c[0].split(';')
             
             shape_text = shape_and_params[0]
@@ -73,11 +86,82 @@ class FileIO:
             shape = [int(s) for s in shape_text]
             
             data_text = c[1:]
-            data_flat = np.array([[int(l_split) for l_split in l.split(' ')] for l in data_text])
+            data_flat = np.array([[float(l_split) for l_split in l.split(' ')] for l in data_text])
             
             data = data_flat.reshape(tuple([data_flat.shape[0]]) + tuple(shape))
             
             output.append([tuple(shape), params_text, data])
+        
+        print("done")
+        
+        print("saving to brain...")
+        
+        self.brain = output
+        
+        print("done")
+
+
+    def get_whole_brain(self):
+        print("fetching brain...")
+        return self.brain
+        print("done")
+        
+
+    def get_segment_brain(self, i, j):
+        return self.brain[i:j]
+
+    def get_slice_brain(self, i):
+        return self.brain[i]
+
+    def read_all(self):
+        
+        print("reading...")
+        
+        container = [[]]
+        
+        with open(self.filename) as f:
+            lines = f.readlines()
+            
+            for l in lines:
+                if not l == '@\n':
+                    container[-1].append(l)
+                else:
+                    container.append([])
+                    
+            del(container[-1])
+        
+        
+        print("done")
+        
+        output = []
+        
+        sh = len(container)
+        
+        print("unpacking container...")
+        for i, c  in enumerate(container):
+            
+            print("reading set", i, '/', sh)
+            
+            shape_and_params = c[0].split(';')
+            
+            shape_text = shape_and_params[0]
+            params_text = shape_and_params[1:]
+            
+            shape_text = shape_text.replace('(','')
+            shape_text = shape_text.replace(')','')
+            
+            shape_text = shape_text.split(', ')
+            
+            shape = [int(s) for s in shape_text]
+            
+            data_text = c[1:]
+            data_flat = np.array([[float(l_split) for l_split in l.split(' ')] for l in data_text])
+            
+            data = data_flat.reshape(tuple([data_flat.shape[0]]) + tuple(shape))
+            
+            output.append([tuple(shape), params_text, data])
+        
+        print("done")
         
         return output
         

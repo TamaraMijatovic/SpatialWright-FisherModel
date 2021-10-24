@@ -110,8 +110,20 @@ if __name__ == '__main__':
     
     size = 50
     
-    pop_coeffs = [[[0.5, 0.5] for j in range(size)] for i in range(size)]
-    spread_coeffs = [[[0.001, 0.001] for j in range(size)] for i in range(size)]
+    pop_coeffs = [[[0, 0.5] for j in range(size)] for i in range(size)]
+    
+    pop_coeffs[0][0][0] = 10
+    
+    spread_coeffs = [[[0.01, 0.01] for j in range(size)] for i in range(size)]
+    
+    
+    # i-50 < i +30 - 5*j and i - 5 * j < -40:
+    
+    for i in range(size):
+        for j in range(size):
+            if abs(i%20) < 1 or abs(j % 20) < 1:
+                spread_coeffs[i][j][0] = 0.5
+                spread_coeffs[i][j][1] = 0.01
     
     # pop_coeffs = [[[0.5, 0.5, 0.5] for j in range(size)] for i in range(size)]
     # spread_coeffs = [[[0.001, 0.001, 0.001] for j in range(size)] for i in range(size)]
@@ -124,7 +136,7 @@ if __name__ == '__main__':
     
     next_generation(size, populations, spread_coeffs)
     
-    N_steps = 1000
+    N_steps = 5000
     rel_pop = np.zeros((size, size, 2))
     
     BM = BlotchinessMeasurer()
@@ -141,9 +153,18 @@ if __name__ == '__main__':
         blotchiness.append(BM.measure_squared_distance_neighbors(rel_pop))
         mean.append(BM.measurePop(rel_pop))
         
-        if(i%100 == 0):
+        if(i%10 == 0):
+            print(i)
             plt.imshow(rel_pop[:,:,0])
+            plt.axis('off')
+            plt.title("t="+str(i))
+            plt.savefig('plot_examplepop_'+ str(i)+ '.png', dpi=100, bbox_inches='tight')
             plt.show()
-            
+
+    # plt.imshow(rel_pop[:,:,0])
+    # plt.axis('off')
+    # plt.title(100)
+    # plt.savefig('plot_examplepop.png', dpi=300, bbox_inches='tight')
+    # plt.show()
             
             
