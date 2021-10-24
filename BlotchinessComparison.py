@@ -58,7 +58,7 @@ class BlotchinessComparison:
                 for j in range(len(mean_blotch)):
                     generations = len(mean_blotch[j])
                     plt.fill_between(np.arange(generations), min_blotch[j], max_blotch[j], color=cm.tab20(2*(i%10)+1))
-                    plt.plot(mean_blotch[j], c=cm.tab20(2*(i%10)), linestyle=linestyles[j%len(linestyles)], Label=f'labels[1]={c}, allele {j}')
+                    plt.plot(mean_blotch[j], c=cm.tab20(2*(i%10)), linestyle=linestyles[j%len(linestyles)], Label=f'{labels[1]}={c}, allele {j}')
             plt.xlabel('generation')
             plt.ylabel('blotchiness')
             plt.legend()
