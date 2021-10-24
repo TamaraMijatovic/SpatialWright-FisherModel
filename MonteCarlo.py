@@ -30,11 +30,11 @@ def generate_initial_pop(size, mode=1):
     return init_pop
 
 def MonteCarloRun(args):
-    c, size, connection_mat, individuals, alleles, generations, bias, run = args
+    c, size, connection_mat, gene_copies, alleles, generations, bias, run = args
     
     print(f'c: {c}, run: {run}')
     # Generate Landscape
-    l = Landscape(connection_mat, individuals, alleles)
+    l = Landscape(connection_mat, gene_copies, alleles)
     l.set_initial_populations(generate_initial_pop(size, mode=1))
     for i in range(generations):
         l.update_biased(bias)
@@ -42,14 +42,14 @@ def MonteCarloRun(args):
     #print(c, l.get_generational_memory())
     return l.get_generational_memory()
 
-def MonteCarlo(c_vals, size, individuals=100, alleles=2, generations=1000, runs=100, bias=None):
+def MonteCarlo(c_vals, size, gene_copies=100, alleles=2, generations=1000, runs=100, bias=None):
     
     results_dict = {}
     for c in c_vals:
         # Generate connection matrix
         connection_mat = generate_connection_mat(c, size)
         
-        args = [[c, size, connection_mat, individuals, alleles, generations, bias, run] for run in range(runs)]
+        args = [[c, size, connection_mat, gene_copies, alleles, generations, bias, run] for run in range(runs)]
         with Pool(12) as p:
             results = p.map(MonteCarloRun, args)
     
