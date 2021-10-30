@@ -95,35 +95,7 @@ class Analysis:
         vis = Visualization(grid=grid)
         for c in self.results:
             vis.visualize_genePool_generations(generations=self.results[c][0], title=f'{title}_c{c}')
-        
-
-# def analyze_all_data():
-#     datasets = ['Data/Dataset1_unbiased.txt', \
-#                 'Data/Dataset2_biased_1_1.25.txt', \
-#                 'Data/Dataset3_biased_1_1.5.txt', \
-#                 'Data/Dataset4_unbiased.txt', \
-#                 'Data/Dataset5_biased_1_1.25.txt', \
-#                 'Data/Dataset6_biased_1_1.5.txt', \
-#                 'Data/Dataset7_unbiased.txt', \
-#                 'Data/Dataset8_biased_1_1.25.txt', \
-#                 'Data/Dataset9_biased_1_1.5.txt']
-#     #datasets = ['Data/test.txt']
-        
-#     for i, dataset in enumerate(datasets[6:]):
-#         i+=7
-#         #i='_test'
-#         data = Analysis(dataset)
-#         print(f"Data loaded! {i}")
-        
-#         for measure in range(1,5):
-#             data.analyze(measure)
-#             data.store_blotchiness(f'Blotchiness_results_measure{measure}.txt')
-#             data.visualize_blotchiness(f"Dataset{i}_blotchiness_{measure}")
-#         print(f"Data analyzed! {i}")
-
-#         # data_test.visualize_last_genePool([5,5], "test_final")
-#         data.visualize_last_genePool([20,20], f"Dataset{i}_final")
-        
+   
 
 def analyze_all_data():
     for i, bias in enumerate([[1,1], [1,1.25], [1,1.5]]):
@@ -148,7 +120,7 @@ def analyze_one_run():
     # print("Data loaded!")
     # data.visualize_one_run([5,5])
 
-    data = Analysis('Data/Dataset1_unbiased.txt')
+    data = Analysis('Data/Dataset0_biased_1_1.txt')
     print("Data loaded!")
     data.visualize_one_run([20,20])
 

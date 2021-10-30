@@ -45,7 +45,7 @@ def simulate():
     random_seeds = np.random.randint(2**16-1, size = (9,3,50)) #total amount of runs
     
     # store random seeds for later reference
-    f = open('seeds.txt', "w")
+    f = open('Data/seeds.txt', "w")
     for seed in random_seeds.flatten():
         f.write(f'{seed},')
     f.close()
