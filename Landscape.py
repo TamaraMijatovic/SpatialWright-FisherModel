@@ -41,25 +41,29 @@ class Landscape:
     
     def exchange(self):
         alleles = self.get_genePools()
-        for i,j in product(range(self.N), range(self.N)):
-            p=self.connections[i][j] # exchange from i to j
-            if p != 0:
-                exchanged = [np.sum(np.random.rand(allele)<p) for allele in alleles[i]] # every allele has a probability of being exchanged
-                self.populations[j].add_genes(exchanged) # the number of exchanged alleles is random
-                #print(exchanged)
-                
+        for j in range(self.N):
+            exchanged = np.zeros(len(alleles[j]))
+            for i in range(self.N):
+                p=self.connections[i][j] # exchange from i to j
+                if p != 0:
+                    exchanged += [np.sum(np.random.rand(allele)<p) for allele in alleles[i]] # every allele has a probability of being exchanged
+            self.populations[j].add_genes(exchanged) # the number of exchanged alleles is random
+            #print(exchanged)
+            
     def exchange_biased(self, bias=None):
         alleles = self.get_genePools()
         
         if bias == None:
             bias = [1 for i in range(len(alleles[0]))]
         
-        for i,j in product(range(self.N), range(self.N)):
-            p=self.connections[i][j] # exchange from i to j
-            if p != 0:
-                exchanged = [np.sum(np.random.rand(allele)<bias[k]*p) for k,allele in enumerate(alleles[i])] # every allele has a probability of being exchanged
-                self.populations[j].add_genes(exchanged) # the number of exchanged alleles is random
-                #print(exchanged)
+        for j in range(self.N):
+            exchanged = np.zeros(len(alleles[j]))
+            for i in range(self.N):
+                p=self.connections[i][j] # exchange from i to j
+                if p != 0:
+                    exchanged += [np.sum(np.random.rand(allele)<bias[k]*p) for k,allele in enumerate(alleles[i])] # every allele has a probability of being exchanged
+            self.populations[j].add_genes(exchanged) # the number of exchanged alleles is random
+            #print(exchanged)
                     
     def next_gen_i(self,i):
         self.populations[i].next_generation()

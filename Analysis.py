@@ -7,6 +7,7 @@ Created on Thu Oct 21 11:48:15 2021
 
 from Database import Database
 from BlotchinessMeasurer import BlotchinessMeasurer
+from Visualization import Visualization
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -89,33 +90,74 @@ class Analysis:
             
             plt.savefig(f'Plots/{title}_c{c}.png')
             #plt.close()    
-
-
-if __name__=='__main__':
-    
-    datasets = ['Data/Dataset1_unbiased.txt', \
-                'Data/Dataset2_biased_1_1.25.txt', \
-                'Data/Dataset3_biased_1_1.5.txt', \
-                'Data/Dataset4_unbiased.txt', \
-                'Data/Dataset5_biased_1_1.25.txt', \
-                'Data/Dataset6_biased_1_1.5.txt', \
-                'Data/Dataset7_unbiased.txt', \
-                'Data/Dataset8_biased_1_1.25.txt', \
-                'Data/Dataset9_biased_1_1.5.txt']
-    #datasets = ['Data/test.txt']
+            
+    def visualize_one_run(self, grid, title='Example_run'):
+        vis = Visualization(grid=grid)
+        for c in self.results:
+            vis.visualize_genePool_generations(generations=self.results[c][0], title=f'{title}_c{c}')
         
-    for i, dataset in enumerate(datasets[6:]):
-        i+=7
-        #i='_test'
-        data = Analysis(dataset)
-        print(f"Data loaded! {i}")
+
+# def analyze_all_data():
+#     datasets = ['Data/Dataset1_unbiased.txt', \
+#                 'Data/Dataset2_biased_1_1.25.txt', \
+#                 'Data/Dataset3_biased_1_1.5.txt', \
+#                 'Data/Dataset4_unbiased.txt', \
+#                 'Data/Dataset5_biased_1_1.25.txt', \
+#                 'Data/Dataset6_biased_1_1.5.txt', \
+#                 'Data/Dataset7_unbiased.txt', \
+#                 'Data/Dataset8_biased_1_1.25.txt', \
+#                 'Data/Dataset9_biased_1_1.5.txt']
+#     #datasets = ['Data/test.txt']
         
-        for measure in range(1,5):
+#     for i, dataset in enumerate(datasets[6:]):
+#         i+=7
+#         #i='_test'
+#         data = Analysis(dataset)
+#         print(f"Data loaded! {i}")
+        
+#         for measure in range(1,5):
+#             data.analyze(measure)
+#             data.store_blotchiness(f'Blotchiness_results_measure{measure}.txt')
+#             data.visualize_blotchiness(f"Dataset{i}_blotchiness_{measure}")
+#         print(f"Data analyzed! {i}")
+
+#         # data_test.visualize_last_genePool([5,5], "test_final")
+#         data.visualize_last_genePool([20,20], f"Dataset{i}_final")
+        
+
+def analyze_all_data():
+    for i, bias in enumerate([[1,1], [1,1.25], [1,1.5]]):
+        for sim in range(3):
+            dataset = f'Data/Dataset{sim}_biased_{bias[0]}_{bias[1]}.txt'
+            
+            data = Analysis(dataset)
+            print(f"Data loaded! {i*3+sim}")
+            
+            measure = 4
             data.analyze(measure)
             data.store_blotchiness(f'Blotchiness_results_measure{measure}.txt')
-            data.visualize_blotchiness(f"Dataset{i}_blotchiness_{measure}")
-        print(f"Data analyzed! {i}")
+            data.visualize_blotchiness(f"Dataset{sim}_biased_{bias[0]}_{bias[1]}_blotchiness_{measure}")
+            print(f"Data analyzed! {i*3+sim}")
+    
+            # data_test.visualize_last_genePool([5,5], "test_final")
+            data.visualize_last_genePool([20,20], f"Dataset{sim}_biased_{bias[0]}_{bias[1]}_final")
+        
+        
+def analyze_one_run():
+    # data = Analysis('Data/test.txt')
+    # print("Data loaded!")
+    # data.visualize_one_run([5,5])
 
-        # data_test.visualize_last_genePool([5,5], "test_final")
-        data.visualize_last_genePool([20,20], f"Dataset{i}_final")
+    data = Analysis('Data/Dataset1_unbiased.txt')
+    print("Data loaded!")
+    data.visualize_one_run([20,20])
+
+if __name__=='__main__':
+    analyze_all_data()
+    
+    
+    
+    
+    
+    
     

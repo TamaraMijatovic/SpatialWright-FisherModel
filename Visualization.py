@@ -11,9 +11,15 @@ import numpy as np
 import time
 
 class Visualization:
-    def __init__(self, Landscape, grid):
+    def __init__(self, Landscape=None, grid=None):
         self.Landscape = Landscape
         self.grid = grid
+        
+    def set_grid(self, grid):
+        self.grid = grid
+        
+    def set_landscape(self, Landscape):
+        self.Landscape = Landscape
     
     def visualize_connections(self):
         connections = self.Landscape.get_connections()
@@ -36,8 +42,11 @@ class Visualization:
         else:
             self.obj.set_data(np.reshape(gen[:,0], self.grid))
         
-    def visualize_genePool_generations(self, every=1, title='Landscape evolution'):
-        generations = np.transpose(np.array(self.Landscape.get_generational_memory()), [1,0,2])
+    def visualize_genePool_generations(self, generations=None, every=1, title='Landscape evolution'):
+        if generations == None:
+            generations = np.array(self.Landscape.get_generational_memory())
+            
+        generations = np.transpose(generations, [1,0,2])
         # transpose to make the 0th axis correspond to the generations rather than the populations.
         
         plt.ion()
@@ -48,28 +57,36 @@ class Visualization:
             fig.canvas.draw()
             fig.canvas.flush_events()
             time.sleep(0.01)
+            #if i==0:
+            #    time.sleep(30)
         
         # https://www.geeksforgeeks.org/how-to-update-a-plot-on-same-figure-during-the-loop/
 
 if __name__=='__main__':
     
-    c = 0.05
-    size = 10
-    a = np.zeros((size**2, size**2)) # Create matrix with only 0
-    diag1 = np.array([[c for i in range(size-1)]+[0] for j in range(size)]).flatten()[:-1]
-    diag2 = [c for i in range((size-1)*size)]
-    connection_mat = np.diag(diag1, 1) + np.diag(diag1, -1) + np.diag(diag2, size) + np.diag(diag2, -size)
+    def generate_connection_mat(c, size):
+        diag1 = np.array([[c for i in range(size-1)]+[0] for j in range(size)]).flatten()[:-1]
+        diag2 = [c for i in range((size-1)*size)]
+        connection_mat = np.diag(diag1, 1) + np.diag(diag1, -1) + np.diag(diag2, size) + np.diag(diag2, -size)
+        
+        #print('assymetries:', connection_mat[np.where(connection_mat-connection_mat.T)])
+        return connection_mat
     
-    l = Landscape(connection_mat, 10, 2)
-     #l.set_initial_populations([[1,0], [1,1], [1,1], [0,1]])
-    l.set_initial_populations([[1,0]]+[[1,0] for i in range(size**2-2) ]+[[0,1]])
+    c = 10
+    size = 20
+    connection_mat = generate_connection_mat(c,size)
+    
+    l = Landscape(connection_mat, N_copies=1, N_alleles=2)
+    #l.set_initial_populations([[1,0], [1,1], [1,1], [0,1]])
+    #l.set_initial_populations([[0,1]]+[[1,0] for i in range(size**2-2)]+[[0,1]])
+    l.set_initial_populations([[1,1] for i in range(size**2)])
     
     v = Visualization(l, [size,size])
     v.visualize_connections()
     print("Initial gene pools:", l.get_genePools())
     v.visualize_current_genePool()
     for i in range(200):
-        l.update_biased([1,2])
+        l.update_biased()
     v.visualize_genePool_generations(every=1)
     #v.visualize_current_genePool(l, [size,size], 'Final landscape')
     

@@ -30,7 +30,8 @@ def generate_initial_pop(size, mode=1):
     return init_pop
 
 def MonteCarloRun(args):
-    c, size, connection_mat, gene_copies, alleles, generations, bias, run = args
+    c, size, connection_mat, gene_copies, alleles, generations, bias, run, seed = args
+    np.random.seed(seed)
     
     print(f'c: {c}, run: {run}')
     # Generate Landscape
@@ -42,15 +43,17 @@ def MonteCarloRun(args):
     #print(c, l.get_generational_memory())
     return l.get_generational_memory()
 
-def MonteCarlo(c_vals, size, gene_copies=100, alleles=2, generations=1000, runs=100, bias=None):
+def MonteCarlo(c_vals, size, gene_copies=100, alleles=2, generations=1000, runs=100, bias=None, seeds=None):
+    if seeds is None:
+        seeds = np.random.randint(2**16-1, size=(len(c_vals), runs))
     
     results_dict = {}
-    for c in c_vals:
+    for i, c in enumerate(c_vals):
         # Generate connection matrix
         connection_mat = generate_connection_mat(c, size)
         
-        args = [[c, size, connection_mat, gene_copies, alleles, generations, bias, run] for run in range(runs)]
-        with Pool(12) as p:
+        args = [[c, size, connection_mat, gene_copies, alleles, generations, bias, run, seeds[i, run]] for run in range(runs)]
+        with Pool(10) as p:
             results = p.map(MonteCarloRun, args)
     
         results_dict[c] = results
@@ -60,7 +63,7 @@ def MonteCarlo(c_vals, size, gene_copies=100, alleles=2, generations=1000, runs=
     
 if __name__=='__main__':
     tt = time.time()
-    results = MonteCarlo(c_vals=[0.001, 0.0001], size=5, generations=100, runs=20, bias=[1,2])
+    results = MonteCarlo(c_vals=[0.001, 0.0001], size=5, generations=10, runs=2, bias=[1,2], alleles=10)
     print('Execution time:', time.time()-tt)
     print(results)
     time.sleep(60)
