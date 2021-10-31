@@ -6,27 +6,24 @@ Created on Sun Oct 24 13:05:17 2021
 """
 
 from limitedCaseFileIO import FileIO
-
 import time
-
 import measureBlotchiness as mB
-
 import matplotlib.pyplot as plt
-
 import numpy as np
 
+# STARTING THE PROCESS OF READING OUT A DATA FILE
 t0 = time.time()
 
 fileIO = FileIO()
-
-fileIO.set_filename("run2.txt")
+fileIO.set_filename("run1.txt")
 fileIO.read_all_and_remember_in_brain()
 
 t1 = time.time()
 print(t1-t0)
 
-#%% Measure and plot
+#%% Measure and plot single Monte Carlo Simulation
 
+# Marking the positions of runs in the file. In steps of 50 because this example had 50 repetitions per value of c
 batches = [(0, 50), (50, 100), (100, 150), (150, 200)]
 c = [1, 0.1, 0.01, 0.001]
 
@@ -71,8 +68,8 @@ for batch_nr, (start_batch_0, stop_batch_0) in enumerate(batches):
     plt.savefig('plot_c'+str(c[batch_nr])+'.png', dpi=300, bbox_inches='tight')
     plt.show()
     
-#%% Measure and plot together
-
+#%% Measure and plot Triplo
+# Marking the positions of runs in the file. In steps of 50 because this example had 50 repetitions per value of c
 batches = [(0, 50), (50, 100), (100, 150), (150, 200)]
 c = [1, 0.1, 0.01, 0.001]
 

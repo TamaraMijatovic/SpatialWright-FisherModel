@@ -9,7 +9,10 @@ import numpy as np
 
 class BlotchinessMeasurer:
     
+    
+    #%% OUTDATED
     # Input: A lattice that contains the information for each color (numpy)
+    # Output: Array containing the distance from neighbors for each allele
     def measure(self, lattice):
         
         out_lattice = np.zeros(lattice.shape)
@@ -34,20 +37,11 @@ class BlotchinessMeasurer:
     
     
     
+    #%% SQRT OF WHAT IS ACTUALLY HAPPENING
+    # INPUT: 2D array containing relative allele frequencies of populations (1D)
+    # OUTPUT: One number describing the average distance from neighbors
     def measure_distance_neighbors(self, lattice):
         out_lattice = np.zeros(lattice.shape[:2])
-        
-        # neighbor_l = (lattice[1:, :, :] - lattice[:-1, :, :])**2
-        # neighbor_l = np.sqrt(np.sum(neighbor_l), (2))
-        
-        # neighbor_r = (lattice[:-1, :, :] - lattice[1:, :, :])**2
-        # neighbor_r = np.sqrt(np.sum(neighbor_r), (2))
-        
-        # neighbor_u = (lattice[:, 1:, :] - lattice[:, :-1, :])**2
-        # neighbor_u = np.sqrt(np.sum(neighbor_u), (2))
-        
-        # neighbor_d = (lattice[:, :-1, :] - lattice[:, 1:, :])**2
-        # neighbor_d = np.sqrt(np.sum(neighbor_d), (2))
         
         out_lattice[1:, :] += np.sqrt(np.mean((lattice[1:, :, :] - lattice[:-1, :, :])**2, (2)))
         out_lattice[:-1, :] += np.sqrt(np.mean((lattice[:-1, :, :] - lattice[1:, :, :])**2, (2)))
@@ -55,29 +49,16 @@ class BlotchinessMeasurer:
         out_lattice[:, :-1] += np.sqrt(np.mean((lattice[:, :-1, :] - lattice[:, 1:, :])**2, (2)))
         
         out_lattice = out_lattice / 4
-        
-        # out_lattice = (neighbor_l + neighbor_r + neighbor_u + neighbor_d) / 4
-        
         mean_out_lattice = np.mean(out_lattice[1:-1, 1:-1], (0, 1))
 
         
         return mean_out_lattice
 
-
+    #%% ACTUAL METRIC
+    # INPUT: 2D array containing relative allele frequencies of populations (1D)
+    # OUTPUT: One number describing the average squared distance from neighbors
     def measure_squared_distance_neighbors(self, lattice):
         out_lattice = np.zeros(lattice.shape[:2])
-        
-        # neighbor_l = (lattice[1:, :, :] - lattice[:-1, :, :])**2
-        # neighbor_l = np.sqrt(np.sum(neighbor_l), (2))
-        
-        # neighbor_r = (lattice[:-1, :, :] - lattice[1:, :, :])**2
-        # neighbor_r = np.sqrt(np.sum(neighbor_r), (2))
-        
-        # neighbor_u = (lattice[:, 1:, :] - lattice[:, :-1, :])**2
-        # neighbor_u = np.sqrt(np.sum(neighbor_u), (2))
-        
-        # neighbor_d = (lattice[:, :-1, :] - lattice[:, 1:, :])**2
-        # neighbor_d = np.sqrt(np.sum(neighbor_d), (2))
         
         out_lattice[1:, :] += (np.mean((lattice[1:, :, :] - lattice[:-1, :, :])**2, (2)))
         out_lattice[:-1, :] += (np.mean((lattice[:-1, :, :] - lattice[1:, :, :])**2, (2)))
@@ -85,20 +66,16 @@ class BlotchinessMeasurer:
         out_lattice[:, :-1] += (np.mean((lattice[:, :-1, :] - lattice[:, 1:, :])**2, (2)))
         
         out_lattice = out_lattice / 4
-        
-        # out_lattice = (neighbor_l + neighbor_r + neighbor_u + neighbor_d) / 4
-        
+
         mean_out_lattice = np.mean(out_lattice[1:-1, 1:-1], (0, 1))
 
         
         return mean_out_lattice
 
-    
+
+    # RETURNS THE AVERAGE ALLELE FREQUENCIES
     def measurePop(self, lattice):
-
-        mean_lattice = np.mean(lattice[1:-1, 1:-1], (0, 1))
-
-        
+        mean_lattice = np.mean(lattice[1:-1, 1:-1], (0, 1))    
         return mean_lattice
     
     

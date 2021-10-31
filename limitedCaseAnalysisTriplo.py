@@ -6,14 +6,13 @@ Created on Sun Oct 24 15:05:16 2021
 """
 
 from limitedCaseFileIO import FileIO
-
 import time
-
 import measureBlotchiness as mB
-
 import matplotlib.pyplot as plt
-
 import numpy as np
+
+
+#%% ANALYSIS FOR A SINGLE TRIPLO
 
 t0 = time.time()
 
