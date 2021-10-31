@@ -4,12 +4,32 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
+'''
+The Analysis class loads the data, calculates the blotchiness measure and stores 
+the results in a datafile. It also visualizes the results of the monte carlo
+simulations as well as the results of the blotchiness measure.
+
+- file (str): name of the file containing the blotchiness resutls.
+- Blotchiness_results (dict): blotchiness results obtained from file.
+- bias (dict): dictionary indicating the bias belonging to each dataset.
+    
+This program can be used to compare the blotchiness results for different conditions.
+
+'''
+
 class BlotchinessComparison:
+    
+    #%% Initialize
+    
     def __init__(self, biases, file_name = 'Blotchiness_results.txt'):
         self.file = f"Data\{file_name}"
         self.Blotchiness_results = self.read_blotchiness_results()
         self.bias = biases
         
+        
+    #%% Obtain data
+        
+    # obtain data from file
     def read_blotchiness_results(self):
         results = {}
         
@@ -33,6 +53,7 @@ class BlotchinessComparison:
 
         return results
     
+    # Transform the dictionary so that the other quantity is on the first axis
     def transform_blotchiness_results(self):
         transformed_results = {}
         
@@ -45,15 +66,21 @@ class BlotchinessComparison:
                     transformed_results[c] = {key : self.Blotchiness_results[key][c]}
         
         return transformed_results
-            
+           
+    
+    #%% Comparison plots
+    
+    # Make plots that allow for comparison of the blotchiness measure for different conditions
     def compare(self, results, labels=['bias','c'], mode=1):
         linestyles = ['-', '--', ':', '-.']
         markers = ['', '*', 'o']
 
         if mode == 1:
+            # plot conditions in seperate figures
             plt.figure(f"{labels[0]}", figsize=(15,4))
             for k, key in enumerate(results):
                 plt.subplot(1,len(list(results.keys())),k+1)
+                plt.grid()
                 plt.title(f"{labels[0]} = {key}")
                 for i, c in enumerate(results[key]):
                     min_blotch = np.min(results[key][c], 0)
@@ -69,7 +96,9 @@ class BlotchinessComparison:
                 plt.xlim([0,generations])
                 plt.ylim([0,1])
         else:
-            plt.figure(f"{labels[0]}",figsize=(10,8))
+            # plot all conditions in the same figure
+            plt.figure(f"{labels[0]}",figsize=(8,6))
+            #plt.grid()
             for k, key in enumerate(results):
                 for i, c in enumerate(results[key]):
                     min_blotch = np.min(results[key][c], 0)
@@ -84,14 +113,18 @@ class BlotchinessComparison:
                 plt.legend()
                 plt.xlim([0,generations])
                 plt.ylim([0,1])
-        
-    def compare_connection(self, mode):
+    
+    # Make comparison for differnt values of c
+    def compare_connection(self, mode=1):
         self.compare(self.Blotchiness_results, labels=['bias','c'], mode=mode)
         
-    def compare_bias(self, mode):
+    # Make comparison for different biases
+    def compare_bias(self, mode=1):
         results = self.transform_blotchiness_results()
         self.compare(results, labels=['c','bias'], mode=mode)
             
+        
+#%% Main
         
 if __name__=='__main__':    
     

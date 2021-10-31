@@ -3,9 +3,24 @@
 from MonteCarlo import MonteCarlo
 import time
 
+'''
+The Database class contains functions to store the results of Monte Carlo simulation
+in a datafile and reading these results from the datafile. This class requires the
+data and the files to be in a specific format.
+
+- f_name (str): name of the file where date should be stored/obtained from.
+
+'''
+
 class Database:
+    
+    #%% Initialize
+    
     def __init__(self, datafile):
         self.f_name = datafile
+    
+    
+    #%% Write
     
     def write(self, f, data):
         for key in data:
@@ -29,6 +44,9 @@ class Database:
         f = open(self.f_name, "a")
         self.write(f, data)
         f.close()
+    
+    
+    #%% Read
     
     def load(self):
         f = open(self.f_name, "r")
@@ -71,7 +89,12 @@ class Database:
         return dictionary
     
     
+#%% Testing
+    
 if __name__=='__main__':
+    
+    '''Create test database, run Monte Carlo simulation, store and read resutls.'''
+    
     database = Database('Data/test.txt')
     results = MonteCarlo(c_vals=[0.001, 0.0001], size=5, generations=10, runs=50)
     print("Before:", results)

@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Oct 21 11:48:15 2021
-
-@author: tmija
-"""
 
 from Database import Database
 from BlotchinessMeasurer import BlotchinessMeasurer
@@ -11,7 +6,25 @@ from Visualization import Visualization
 import numpy as np
 import matplotlib.pyplot as plt
 
+'''
+The Analysis class loads the data, calculates the blotchiness measure and stores 
+the results in a datafile. It also visualizes the results of the monte carlo
+simulations as well as the results of the blotchiness measure.
+
+- dataset_name (str): name of the dataset.
+- database (obj): database object ofr the dataset.
+- results (dict): results obtained form the database.
+- BM (obj): BlotchinessMeasurer object for measureing blotchiness of results.
+- blotchiness (array): blotchiness results of analysis.
+
+This program can be used to analyze all data, or only one dataset.
+
+'''
+
 class Analysis:
+    
+    #%% Initialize
+    
     def __init__(self, dataset):
         self.dataset_name = dataset
         self.database = Database(self.dataset_name)
@@ -19,15 +32,25 @@ class Analysis:
         self.BM = BlotchinessMeasurer()
         self.blotchiness = []
         
+        
+    #%% Analysis
+    
+    # Calculate blotchiness measure of the results
     def analyze(self, mode):
         self.blotchiness = []
         for c in self.results:
             self.blotchiness.append(self.BM.measure_generations(self.results[c], measure=mode))
+           
             
+    #%% Storing data in file
+           
+    # Store results for blotchiness measure in file
     def store_blotchiness(self, file='Blotchiness_results.txt', clear=False):
         if clear:
+            # clear file before writing
             f = open(f"Data\{file}", "w")
         else:
+            # append to file
             f = open(f"Data\{file}", "a")
         
         for i,c in enumerate(self.results):
@@ -47,9 +70,13 @@ class Analysis:
                     f.write(' ')
                     
             f.write('\n')
-            
+
         f.close()
         
+        
+    #%% Visualization
+        
+    # Visualize blotchiness of all simulations
     def visualize_blotchiness(self, title = "Blotchiness_over_generations"):
         linestyles = ['-', ':', '--', '-.']
         plt.figure(title)
@@ -71,6 +98,8 @@ class Analysis:
         plt.savefig(f'Plots/{title}.png')
         plt.close()
         
+        
+    # Visualize state of the population grid at the end of the population
     def visualize_last_genePool(self, grid, title='Final_landscape'):
         for i,c in enumerate(self.results):
             
@@ -91,11 +120,14 @@ class Analysis:
             plt.savefig(f'Plots/{title}_c{c}.png')
             #plt.close()    
             
+    # Visualize
     def visualize_one_run(self, grid, title='Example_run'):
         vis = Visualization(grid=grid)
         for c in self.results:
             vis.visualize_genePool_generations(generations=self.results[c][0], title=f'{title}_c{c}')
    
+    
+#%% Analyze all data
 
 def analyze_all_data():
     for i, bias in enumerate([[1,1], [1,1.25], [1,1.5]]):
@@ -115,6 +147,8 @@ def analyze_all_data():
             data.visualize_last_genePool([20,20], f"Dataset{sim}_biased_{bias[0]}_{bias[1]}_final")
         
         
+#%% Analyze one dataset
+        
 def analyze_one_run():
     # data = Analysis('Data/test.txt')
     # print("Data loaded!")
@@ -124,8 +158,12 @@ def analyze_one_run():
     print("Data loaded!")
     data.visualize_one_run([20,20])
 
+
+#%% Main
+
 if __name__=='__main__':
     analyze_all_data()
+    #analyze_one_run()
     
     
     

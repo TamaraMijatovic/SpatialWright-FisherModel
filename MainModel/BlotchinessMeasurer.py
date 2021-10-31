@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Oct 21 00:06:04 2021
-
-@author: leand
-"""
 
 import numpy as np
 
+'''
+The BlotchinessMeasurer class contains several measure to quantify the amount of 
+clustering in the population grid.
+
+Input: A lattice that contains the information for each allele (numpy)
+
+'''
+
 class BlotchinessMeasurer:
     
-    # Input: A lattice that contains the information for each color (numpy)
+    #%% Measure 1: Correlation
+    
     def measure(self, lattice):
         
         # make sure lattice is large enough
@@ -29,6 +33,8 @@ class BlotchinessMeasurer:
         return mean_out_lattice
     
     
+    #%% Measure 2: Measure 1 divided by the mean of the lattice
+    
     def measure_divided_by_mean(self, lattice):
         
         mean_out_lattice = self.measure(lattice)
@@ -37,6 +43,8 @@ class BlotchinessMeasurer:
             
         return mean_out_lattice / mean_lattice
     
+    
+    #%% Measure 3: root mean squared distance to neighbours
     
     def measure_distance_neighbors(self, lattice):
         out_lattice = np.zeros(lattice.shape[:2])
@@ -52,6 +60,8 @@ class BlotchinessMeasurer:
         return mean_out_lattice
 
 
+    #%% Measure 4: mean squared distance to neighbours
+    
     def measure_squared_distance_neighbors(self, lattice):
         out_lattice = np.zeros(lattice.shape[:2])
         
@@ -65,11 +75,15 @@ class BlotchinessMeasurer:
         
         return mean_out_lattice
 
+
+    #%% Mean of population
     
     def measurePop(self, lattice):
         mean_lattice = np.mean(lattice[1:-1, 1:-1], (0, 1))        
         return mean_lattice
     
+    
+    #%% Measure generations
     
     def measure_generations(self, data, measure=1, every=1):
         blotchiness = [[] for run in range(len(data))]
@@ -79,6 +93,7 @@ class BlotchinessMeasurer:
             generations = np.transpose(np.array(generational_memory), [1,0,2])
             
             for i, gen in enumerate(generations[np.arange(0,len(generations),every)]):
+                # Reshape data into a grid
                 gen_lattice = np.reshape(gen, (int(round(np.sqrt(len(gen)))), int(round(np.sqrt(len(gen)))), 2))
                 
                 if measure==1:
@@ -95,14 +110,18 @@ class BlotchinessMeasurer:
         
         return mean_blotchiness#, mean_blotchiness-np.min(blotchiness,0), np.max(blotchiness,0)-mean_blotchiness
     
+    
+#%% Testing
+    
 if __name__ == '__main__':
+    
+    '''Calculate the different blotchiness measures for specific given grids'''
     
     A = np.array([[(1,0) for j in range(100)] for i in range(100)]) # completely one color
     B = np.array([[(1,0) for j in range(50)]+[(0,1) for j in range(50)] for i in range(100)]) # half one color half the other color
     C = np.array([[(0.5,0.5) for j in range(100)] for i in range(100)]) # completely 50,50
     D = np.array([[(0.2,0.8) for j in range(100)] for i in range(100)]) # completely 20,80
     E = np.array([[(((i%2)*(j%2)+(1-(i%2))*(1-(j%2))), ((1-(i%2))*(j%2)+(i%2)*(1-(j%2)))) for j in range(100)] for i in range(100)]) # checkerboeard pattern
-    
     
     # A = np.array([[( np.random.rand(),  np.random.rand()) for j in range(100)] for i in range(100)])
     # A = np.array([[(int(2 * np.random.rand()), int(2 * np.random.rand())) for j in range(100)] for i in range(100)])

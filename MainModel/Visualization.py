@@ -1,32 +1,52 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Oct 13 19:31:59 2021
 
-@author: tmija
-"""
-
-from Landscape import Landscape
+from Landscape import Landscape, generate_connection_mat, generate_initial_pop
 import matplotlib.pyplot as plt
 import numpy as np
 import time
 
+'''
+The Visualization class visualizes a given Landscape. Visualization works by 
+plotting the frequency of the first allele and therefore can only be used in 
+the case of 2 alleles. For more alleles additional functions would have to be
+added with a different visualization technique.
+
+- Landscape (obj): the landscape to be visualized.
+- grid (array): the grid on which to visualize the landscape, indicates the position of
+  the populations in space.
+
+'''
+
 class Visualization:
+    
+    #%% Initialize
+    
     def __init__(self, Landscape=None, grid=None):
         self.Landscape = Landscape
         self.grid = grid
         
+        
+    #%% Getters and setters
+    
+    # Setter for the grid
     def set_grid(self, grid):
         self.grid = grid
         
+    # Setter for the Landscape
     def set_landscape(self, Landscape):
         self.Landscape = Landscape
     
+    
+    #%% Static visualization
+    
+    # Plot the connection matrix
     def visualize_connections(self):
         connections = self.Landscape.get_connections()
         plt.figure("Connections")
         plt.imshow(connections)
         plt.colorbar()
         
+    # Plot the current allele frequencies for all populations
     def visualize_current_genePool(self, title='Landscape'):
         landscape = np.array(self.Landscape.get_normalized_genePools()) # get the gene pool
         plt.figure(title)
@@ -34,6 +54,10 @@ class Visualization:
         plt.colorbar()
         plt.clim(0,1)
         
+        
+    #%% Dynamic visualization
+    
+    # Plot allele freqeuncies of one generation for all populations
     def visualize_generation(self, gen, i):
         if i==0:
             self.obj = plt.imshow(np.reshape(gen[:,0], self.grid))
@@ -41,7 +65,9 @@ class Visualization:
             plt.clim(0,1)
         else:
             self.obj.set_data(np.reshape(gen[:,0], self.grid))
-        
+    
+    # Plot the evolution of the populations over generations by updating the plot
+    # for every generation
     def visualize_genePool_generations(self, generations=None, every=1, title='Landscape evolution'):
         if generations == None:
             generations = np.array(self.Landscape.get_generational_memory())
@@ -62,15 +88,14 @@ class Visualization:
         
         # https://www.geeksforgeeks.org/how-to-update-a-plot-on-same-figure-during-the-loop/
 
+
+#%% Testing
+
 if __name__=='__main__':
     
-    def generate_connection_mat(c, size):
-        diag1 = np.array([[c for i in range(size-1)]+[0] for j in range(size)]).flatten()[:-1]
-        diag2 = [c for i in range((size-1)*size)]
-        connection_mat = np.diag(diag1, 1) + np.diag(diag1, -1) + np.diag(diag2, size) + np.diag(diag2, -size)
-        
-        #print('assymetries:', connection_mat[np.where(connection_mat-connection_mat.T)])
-        return connection_mat
+    '''Create a landscape, set up visualization, plot the connection matrix, 
+       the inital gene pool, the evolution over 200 generations and the final 
+       gene pool.'''
     
     c = 10
     size = 20
@@ -88,5 +113,5 @@ if __name__=='__main__':
     for i in range(200):
         l.update_biased()
     v.visualize_genePool_generations(every=1)
-    #v.visualize_current_genePool(l, [size,size], 'Final landscape')
+    v.visualize_current_genePool('Final landscape')
     
