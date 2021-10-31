@@ -1,4 +1,4 @@
-Monte Carlo simulations of the Wright-Fisher model including spacial infomration.
+Monte Carlo simulations of the Wright-Fisher model including spacial information.
 
 Class Population: models a single population of N individuals. 
 Class Landscape: models a grid of populations and facilitates exchange of genes between the populations. 
